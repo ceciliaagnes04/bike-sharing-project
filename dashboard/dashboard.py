@@ -1,4 +1,3 @@
-# dashboard.py
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,12 +7,21 @@ st.title("Bike Sharing Analysis Dashboard")
 
 # Muat Data
 day_df = pd.read_csv("data/day.csv")
-hour_df = pd.read_csv("data/hour.csv")
+day_df['dteday'] = pd.to_datetime(day_df['dteday'])
+
+# Tambahkan Filter Tanggal
+start_date = st.date_input("Tanggal Mulai", day_df['dteday'].min())
+end_date = st.date_input("Tanggal Selesai", day_df['dteday'].max())
+
+# Filter Data Berdasarkan Tanggal
+filtered_df = day_df[(day_df['dteday'] >= pd.to_datetime(start_date)) & (day_df['dteday'] <= pd.to_datetime(end_date))]
 
 # Feature Engineering: Menggabungkan Data Cuaca dari hour_df ke day_df
+hour_df = pd.read_csv("data/hour.csv")
+hour_df['dteday'] = pd.to_datetime(hour_df['dteday'])
 daily_weather = hour_df.groupby('dteday')[['temp', 'hum']].mean().reset_index()
 daily_weather.rename(columns={'temp': 'avg_temp', 'hum': 'avg_hum'}, inplace=True)
-merged_df = pd.merge(day_df, daily_weather, on='dteday', how='left')
+merged_df = pd.merge(filtered_df, daily_weather, on='dteday', how='left')
 
 # Visualisasi 1: Pengaruh Musim
 st.header("Pengaruh Musim Terhadap Jumlah Penyewaan Sepeda")
