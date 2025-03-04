@@ -58,3 +58,6 @@ ax_hum.set_ylabel("Jumlah Penyewaan")
 st.pyplot(fig_hum)
 
 st.write("Sumber data: day.csv dan hour.csv")
+
+# Tambahkan informasi tentang filter
+st.write(f"Data ditampilkan dari tanggal {start_date} hingga {end_date}")
